@@ -1,5 +1,12 @@
 alias ClothingCompanyDashboard.Repo
 alias ClothingCompanyDashboard.Inventory.Product
+require Logger
+
+
+categories = ["Tops", "Bottoms", "Outerwear", "Footwear", "Accessories", "Dresses"]
+price_min = 0
+price_max = 150
+products = []
 
 products = [
   %Product{photo: "/images/dummy100x100.png", title: "T-Shirt", description: "Cotton T-shirt", category: "Tops", price: 19.99, stock: 100},
@@ -13,6 +20,28 @@ products = [
   %Product{photo: "/images/dummy100x100.png", title: "Shorts", description: "Casual summer shorts", category: "Bottoms", price: 24.99, stock: 60},
   %Product{photo: "/images/dummy100x100.png", title: "Blouse", description: "Formal blouse", category: "Tops", price: 29.99, stock: 40}
 ]
+
+
+# First, remove all existing products
+Repo.delete_all(Product)
+
+# Add random products
+for _ <- 1..100 do
+  category = Enum.random(categories)
+  price = Enum.random(price_min..price_max)
+  stock = Enum.random(1..100)
+  product = %Product{
+    photo: "/images/dummy100x100.png",
+    title: "Random Product #{Enum.random(1000..9999)}",
+    description: "",
+    category: category,
+    price: Decimal.new(price),
+    stock: stock
+  }
+  # Insent product into products list
+  Repo.insert!(product)
+  Logger.info("Inserted product: #{product.title}")
+end
 
 for product <- products do
   Repo.insert!(product)
