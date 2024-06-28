@@ -1,5 +1,7 @@
 alias ClothingCompanyDashboard.Repo
 alias ClothingCompanyDashboard.Inventory.Product
+alias ClothingCompanyDashboard.Sales.Transaction
+import Ecto.Query
 require Logger
 
 
@@ -46,3 +48,22 @@ end
 for product <- products do
   Repo.insert!(product)
 end
+
+# Remove all transactions
+Repo.delete_all(Transaction)
+
+# Add random transactions
+for _ <- 1..100 do
+  product = Repo.one(from p in Product, order_by: fragment("RANDOM()"), limit: 1)
+  quantity = Enum.random(1..10)
+  total_price = Decimal.mult(product.price, quantity)
+  transaction = %Transaction{
+    quantity: quantity,
+    total_price: total_price,
+    product_id: product.id
+  }
+  Repo.insert!(transaction)
+  Logger.info("Inserted transaction: #{transaction.id}")
+end
+
+Logger.info("Seeds inserted successfully!")
