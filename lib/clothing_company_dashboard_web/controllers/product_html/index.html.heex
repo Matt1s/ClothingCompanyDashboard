@@ -7,11 +7,14 @@
 	<input class="mb-2 rounded-md" type="text" name="name" placeholder="Product title" value={@name}>
 	<.label for="category">Category</.label>
 	<select class="mb-2 rounded-md" name="category" value={@category}>
+		<!-- Loop through the categories and create an option for each one @all_categories -->
 		<option value="">All</option>
-		<option value="Tops" selected={@category == "Tops"}>Tops</option>
-		<option value="Bottoms" selected={@category == "Bottoms"}>Bottoms</option>
-		<option value="Shoes" selected={@category == "Shoes"}>Shoes</option>
+		<%= for category <- @all_categories do %>
+		<option value={category} selected={category == @category} label={category}/>
+		<% end %>
 	</select>
+
+
 
 	<.label for="category">In-stock only</.label>
 	<input class="mb-2 rounded-md" type="checkbox" name="in_stock" checked={@in_stock}>
