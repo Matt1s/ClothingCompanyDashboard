@@ -4,9 +4,25 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
   alias ClothingCompanyDashboard.Inventory
   alias ClothingCompanyDashboard.Inventory.Product
 
-  def index(conn, _params) do
-    products = Inventory.list_products()
-    render(conn, :index, products: products)
+
+  def index(conn, params) do
+    changeset = Inventory.change_product(%Product{})
+
+    category = Map.get(params, "category")
+    price_min = Map.get(params, "price_min")
+    price_max = Map.get(params, "price_max")
+    name = Map.get(params, "name")
+    in_stock = Map.get(params, "in_stock")
+    products =
+      Inventory.list_products_by_attributes(
+        category,
+        price_min,
+        price_max,
+        name,
+        in_stock
+      )
+
+    render(conn, :index, products: products, changeset: changeset, category: category, price_min: price_min, price_max: price_max, name: name, in_stock: in_stock)
   end
 
   def new(conn, _params) do

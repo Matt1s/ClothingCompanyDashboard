@@ -1,28 +1,64 @@
-<.header>
-  Listing Products
-  <:actions>
-    <.link href={~p"/products/new"}>
-      <.button>New Product</.button>
-    </.link>
-  </:actions>
-</.header>
 
-<.table id="products" rows={@products} row_click={&JS.navigate(~p"/products/#{&1}")}>
-  <:col :let={product} label="Photo"><%= product.photo %></:col>
-  <:col :let={product} label="Title"><%= product.title %></:col>
-  <:col :let={product} label="Description"><%= product.description %></:col>
-  <:col :let={product} label="Category"><%= product.category %></:col>
-  <:col :let={product} label="Price"><%= product.price %></:col>
-  <:col :let={product} label="Stock"><%= product.stock %></:col>
-  <:action :let={product}>
-    <div class="sr-only">
-      <.link navigate={~p"/products/#{product}"}>Show</.link>
-    </div>
-    <.link navigate={~p"/products/#{product}/edit"}>Edit</.link>
-  </:action>
-  <:action :let={product}>
-    <.link href={~p"/products/#{product}"} method="delete" data-confirm="Are you sure?">
-      Delete
-    </.link>
-  </:action>
-</.table>
+<container class="flex justify-between items-start gap-5">
+	<!-- Create a category select, that on submit puts ?category=selected_category in the URL -->
+	<.form action={~p"/products"} method="get" class="flex flex-col">
+	<h1 class="text-lg font-semibold leading-8 text-zinc-800 mb-2">Filter Products</h1>
+	<.label for="name">Name</.label>
+	<input class="mb-2 rounded-md" type="text" name="name" placeholder="Product title" value={@name}>
+	<.label for="category">Category</.label>
+	<select class="mb-2 rounded-md" name="category" value={@category}>
+		<option value="">All</option>
+		<option value="Tops" selected={@category == "Tops"}>Tops</option>
+		<option value="Bottoms" selected={@category == "Bottoms"}>Bottoms</option>
+		<option value="Shoes" selected={@category == "Shoes"}>Shoes</option>
+	</select>
+
+	<.label for="category">In-stock only</.label>
+	<input class="mb-2 rounded-md" type="checkbox" name="in_stock" checked={@in_stock}>
+
+	<.label for="category">Price</.label>
+
+	<!-- Get the min and max price from the query params -->
+	<input type="number" class="mb-2 rounded-md" name="price_min" placeholder="Min. Price" value={@price_min}>
+	<input type="number" class="mb-2 rounded-md" name="price_max" placeholder="Max Price" value={@price_max}>
+	<button class="bg-blue-500 py-2 rounded-md text-white">Filter</button>
+	<a href="/products" class="bg-red-500 py-2 mt-2 rounded-md text-white text-center">Clear</a>
+	</.form>
+	
+	
+	<div class="flex-1">
+		<.header>
+			Products
+			<:actions>
+			<.link href={~p"/products/new"}>
+				<.button>New Product</.button>
+			</.link>
+			</:actions>
+		</.header>
+
+		<!-- Display the products in a table if there are any, otherwise show a message -->
+		<%= if @products != [] do %>
+		<.table id="products" rows={@products} row_click={&JS.navigate(~p"/products/#{&1}")}>
+			<:col :let={product} label="Photo"><img src={product.photo} alt={product.title} class="w-10 h-10 rounded-md" /></:col>
+			<:col :let={product} label="Title"><%= product.title %></:col>
+			<:col :let={product} label="Description"><%= product.description %></:col>
+			<:col :let={product} label="Category"><%= product.category %></:col>
+			<:col :let={product} label="Price"><%= product.price %></:col>
+			<:col :let={product} label="Stock"><%= product.stock %></:col>
+			<:action :let={product}>
+			<div class="sr-only">
+				<.link navigate={~p"/products/#{product}"}>Show</.link>
+			</div>
+			<.link navigate={~p"/products/#{product}/edit"}>Edit</.link>
+			</:action>
+			<:action :let={product}>
+			<.link href={~p"/products/#{product}"} method="delete" data-confirm="Are you sure?">
+				Delete
+			</.link>
+			</:action>
+		</.table>
+		<% else %>
+		<p class="text-zinc-800 text-center mt-5">No products found, please try for a different filter or <a href="/products" class="	underline">clear</a> the filter</p>
+		<% end %>
+	</div>
+</container>

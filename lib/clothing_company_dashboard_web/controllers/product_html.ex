@@ -1,6 +1,5 @@
 defmodule ClothingCompanyDashboardWeb.ProductHTML do
   use ClothingCompanyDashboardWeb, :html
-
   embed_templates "product_html/*"
 
   @doc """

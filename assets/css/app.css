@@ -3,3 +3,6 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.bg-primary {
+    background-color: rgb(228, 229, 255);
+}
