@@ -17,6 +17,7 @@ defmodule ClothingCompanyDashboardWeb.Router do
   scope "/", ClothingCompanyDashboardWeb do
     pipe_through :browser
 
+    resources "/products", ProductController
     get "/", PageController, :home
   end
 
