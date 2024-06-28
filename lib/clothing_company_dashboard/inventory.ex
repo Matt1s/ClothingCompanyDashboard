@@ -53,7 +53,6 @@ defmodule ClothingCompanyDashboard.Inventory do
   defp maybe_filter_by_name(query, name), do: (from p in query, where: p.title == ^name)
 
   defp maybe_filter_by_in_stock(query, nil), do: query
-  defp maybe_filter_by_in_stock(query, in_stock), do: (from p in query, where: p.stock > 0)
 
   @doc """
   Gets a single product.
