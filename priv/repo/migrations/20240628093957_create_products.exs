@@ -13,4 +13,8 @@ defmodule ClothingCompanyDashboard.Repo.Migrations.CreateProducts do
       timestamps(type: :utc_datetime)
     end
   end
+
+  def down do
+    drop table(:products)
+  end
 end

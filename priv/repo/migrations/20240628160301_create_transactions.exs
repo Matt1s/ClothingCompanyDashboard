@@ -12,4 +12,8 @@ defmodule ClothingCompanyDashboard.Repo.Migrations.CreateTransactions do
 
     create index(:transactions, [:product_id])
   end
+
+  def down do
+    drop table(:transactions)
+  end
 end
