@@ -11,4 +11,9 @@ defmodule ClothingCompanyDashboardWeb.DashboardController do
     transactions = Statistics.get_transactions()
     render(conn, "transactions.html", transactions: transactions)
   end
+
+  def inventory(conn, _params) do
+    inventory = Statistics.get_inventory()
+    render(conn, "inventory.html", inventory: inventory)
+  end
 end
