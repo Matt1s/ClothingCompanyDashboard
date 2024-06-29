@@ -46,7 +46,7 @@
 		<:col :let={product} label="Title"><%= product.title %></:col>
 		<:col :let={product} label="Description"><%= product.description %></:col>
 		<:col :let={product} label="Category"><%= product.category %></:col>
-		<:col :let={product} label="Price"><%= product.price %></:col>
+		<:col :let={product} label="Price"><%= Number.Currency.number_to_currency(product.price, unit: "€") %> </:col>
 		<:col :let={product} label="Stock"><%= product.stock %></:col>
 		<:action :let={product}>
 			<div class="sr-only">
