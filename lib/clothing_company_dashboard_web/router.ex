@@ -17,7 +17,6 @@ defmodule ClothingCompanyDashboardWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    resources "/products", ProductController
   end
 
   pipeline :api do
@@ -70,6 +69,7 @@ defmodule ClothingCompanyDashboardWeb.Router do
       on_mount: [{ClothingCompanyDashboardWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+      resources "/products", ProductController
     end
   end
 
