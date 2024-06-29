@@ -12,7 +12,7 @@
     </script>
   </head>
   <body class="bg-primary">
-  <header class="flex justify-between px-4 sm:px-6 lg:px-8 bg-white mt-5 mx-5 rounded-lg shadow py-5"> 
+  <header class="justify-between px-4 sm:px-6 lg:px-8 bg-white mt-5 mx-5 rounded-lg shadow py-5 hidden lg:flex">
     <ul class="relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8">
           <.link
             href={~p"/"}
@@ -102,6 +102,123 @@
         <% end %>
       </ul>
     </header>
+    <!-- Mobile menu -->
+    <div class="lg:hidden">
+      <div class="flex justify-between items-center px-4 py-3 bg-white">
+        <img class="h-8" src={~p"/images/logo.svg"} alt="IGT Consulting s.r.o." />
+        <button
+          id="toggle-mobile-menu"
+          class="text-zinc-900 focus:outline-none"
+        >
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            ></path>
+          </svg>
+        </button>
+      </div>
+      <div
+        class="hidden bg-white shadow-lg"
+      >
+        <ul class="flex flex-col gap-4 px-4 py-2">
+          <li>
+            <.link
+              href={~p"/"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Home
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/statistics"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Statistics
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/products"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Products
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/transactions"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Transactions
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/inventory"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Inventory
+            </.link>
+          </li>
+        </ul>
+        <ul class="flex flex-col gap-4 px-4 py-2">
+        <%= if @current_user do %>
+          <li>
+            <.link
+              href={~p"/users/settings"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Settings
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_out"}
+              method="delete"
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Log out
+            </.link>
+          </li>
+        <% else %>
+          <li>
+            <.link
+              href={~p"/users/register"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Register
+            </.link>
+          </li>
+          <li>
+            <.link
+              href={~p"/users/log_in"}
+              class="text-[0.8125rem] leading-6 text-zinc-900 font-semibold hover:text-zinc-700"
+            >
+              Log in
+            </.link>
+          </li>
+        <% end %>
+      </ul>
+      </div>
+    </div>
+    <!-- End Mobile menu -->
     <%= @inner_content %>
+    <script>
+      const toggleMobileMenu = document.getElementById("toggle-mobile-menu");
+      const mobileMenu = document.querySelector(".bg-white.shadow-lg");
+      toggleMobileMenu.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+    </script>
   </body>
 </html>
