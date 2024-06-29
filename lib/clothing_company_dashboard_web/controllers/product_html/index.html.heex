@@ -6,13 +6,16 @@
 	<.label for="name">Name</.label>
 	<input class="mb-2 rounded-md" type="text" name="name" placeholder="Product title" value={@name}>
 	<.label for="category">Category</.label>
-	<select class="mb-2 rounded-md" name="category" value={@category}>
-		<!-- Loop through the categories and create an option for each one @all_categories -->
-		<option value="">All</option>
+
+	<div class="flex flex-wrap">
+		<!-- Loop through the selected categories and create a checkbox for each one -->
 		<%= for category <- @all_categories do %>
-		<option value={category} selected={category == @category} label={category}/>
+		<span class="p-2 bg-gray-300 rounded-md mr-2 mb-2">
+			<input type="checkbox" name="categories[]" value={category} checked={Enum.member?(@categories, category)}>
+			<%= category %>
+		</span>
 		<% end %>
-	</select>
+	</div> 
 
 
 

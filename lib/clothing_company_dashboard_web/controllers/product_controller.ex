@@ -9,14 +9,14 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
 
 
     # Extract the parameters from the query string
-    category = Map.get(params, "category")
+    categories = Map.get(params, "categories")
     price_min = Map.get(params, "price_min")
     price_max = Map.get(params, "price_max")
     name = Map.get(params, "name")
     in_stock = Map.get(params, "in_stock")
     products =
       Inventory.list_products_by_attributes(
-        category,
+        categories,
         price_min,
         price_max,
         name,
@@ -25,7 +25,7 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
 
     # Define all possible categories (manually for now, but could be extracted from the database in the future)
     all_categories = ["Tops", "Bottoms", "Outerwear", "Footwear", "Accessories", "Dresses"]
-    render(conn, :index, products: products, changeset: changeset, category: category, price_min: price_min, price_max: price_max, name: name, in_stock: in_stock, all_categories: all_categories)
+    render(conn, :index, products: products, changeset: changeset, categories: categories, price_min: price_min, price_max: price_max, name: name, in_stock: in_stock, all_categories: all_categories)
   end
 
   def new(conn, _params) do
