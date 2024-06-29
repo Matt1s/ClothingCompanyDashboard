@@ -5,7 +5,7 @@ defmodule ClothingCompanyDashboard.Repo.Migrations.CreateTransactions do
     create table(:transactions) do
       add :quantity, :integer
       add :total_price, :decimal
-      add :product_id, references(:products, on_delete: :nothing)
+      add :product_id, references(:products, on_delete: :delete_all)
       add :processed_at, :utc_datetime
 
       timestamps(type: :utc_datetime)
