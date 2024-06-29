@@ -66,7 +66,7 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
   end
 
   defp ensure_uploads_directory_exists do
-    uploads_path = Path.join(["priv", "static", "uploads"])
+    uploads_path = Path.join(["priv", "static", "images"])
     unless File.dir?(uploads_path) do
       File.mkdir_p!(uploads_path)
     end
@@ -77,6 +77,7 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
     render(conn, :show, product: product)
   end
 
+  # Support for editing a product with photo upload
   def edit(conn, %{"id" => id}) do
     product = Inventory.get_product!(id)
     changeset = Inventory.change_product(product)
@@ -86,14 +87,32 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
   def update(conn, %{"id" => id, "product" => product_params}) do
     product = Inventory.get_product!(id)
 
-    case Inventory.update_product(product, product_params) do
-      {:ok, product} ->
-        conn
-        |> put_flash(:info, "Product updated successfully.")
-        |> redirect(to: ~p"/products/#{product}")
+    # Extract the photo from the parameters
+    photo = product_params["photo"]
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, :edit, product: product, changeset: changeset)
+    # Define the uploads path
+    upload_path = Path.join(["priv", "static", "images", photo.filename])
+
+    # Save the photo to the uploads directory
+    case File.cp(photo.path, upload_path) do
+      :ok ->
+        # Update product_params to include the photo path
+        updated_product_params = Map.put(product_params, "photo", "/images/" <> photo.filename)
+
+        case Inventory.update_product(product, updated_product_params) do
+          {:ok, product} ->
+            conn
+            |> put_flash(:info, "Product updated successfully.")
+            |> redirect(to: ~p"/products/#{product}")
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            render(conn, :edit, product: product, changeset: changeset)
+        end
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, "Failed to upload photo: #{reason}")
+        |> render(:edit, product: product, changeset: Inventory.change_product(product))
     end
   end
 
