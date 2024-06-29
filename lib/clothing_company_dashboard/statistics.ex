@@ -31,8 +31,8 @@ defmodule ClothingCompanyDashboard.Statistics do
   def transactions_per_month do
     Repo.all(
       from t in Transaction,
-      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at)],
-      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at), count: count(t.id)}
+      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)],
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id)}
     )
     |> Enum.map(fn %{month: month, count: count} ->
       %{month: format_month(month), count: count}
@@ -51,12 +51,11 @@ defmodule ClothingCompanyDashboard.Statistics do
   def sales_per_month_last_year do
     Repo.all(
       from t in Transaction,
-      where: t.inserted_at >= ^DateTime.utc_now(),
-      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at)],
-      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at), count: count(t.id)}
+      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)],
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id), total_price: sum(t.total_price)}
     )
-    |> Enum.map(fn %{month: month, count: count} ->
-      %{month: format_month(month), count: count}
+    |> Enum.map(fn %{month: month, count: count, total_price: total_price} ->
+      %{month: format_month(month), count: count, total_price: total_price}
     end)
   end
 
@@ -68,7 +67,7 @@ defmodule ClothingCompanyDashboard.Statistics do
     query =
       from t in Transaction,
         join: p in Product, on: t.product_id == p.id,
-        select: %{product_title: p.title, quantity: t.quantity, date: t.inserted_at}
+        select: %{product_title: p.title, quantity: t.quantity, date: t.processed_at}
 
     Repo.all(query)
   end

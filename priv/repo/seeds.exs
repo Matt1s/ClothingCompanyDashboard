@@ -57,10 +57,17 @@ for _ <- 1..100 do
   product = Repo.one(from p in Product, order_by: fragment("RANDOM()"), limit: 1)
   quantity = Enum.random(1..10)
   total_price = Decimal.mult(product.price, quantity)
+
+  # processed_at should be random date in the last year
+  processed_at = DateTime.utc_now() |> DateTime.add(-Enum.random(1..365) * 24 * 60 * 60)
+
+  # remove microseconds from the timestamp
+  processed_at = processed_at |> DateTime.truncate(:second)
   transaction = %Transaction{
     quantity: quantity,
     total_price: total_price,
-    product_id: product.id
+    product_id: product.id,
+    processed_at: processed_at
   }
   Repo.insert!(transaction)
   Logger.info("Inserted transaction: #{transaction.id}")

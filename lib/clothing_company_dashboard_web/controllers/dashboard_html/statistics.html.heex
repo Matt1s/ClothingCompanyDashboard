@@ -24,7 +24,7 @@
       <h3 class="text-xl font-semibold">Sales per Month</h3>
       <ul>
         <%= for sale <- @stats.sales_per_month_last_year do %>
-          <li class="mt-2"><%= sale.month %> - <%= sale.count %> sales</li>
+          <li class="mt-2"><%= sale.month %> - <%= sale.total_price %> sales</li>
         <% end %>
       </ul>
     </div>

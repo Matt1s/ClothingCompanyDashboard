@@ -6,7 +6,7 @@ defmodule ClothingCompanyDashboard.Sales.Transaction do
     field :quantity, :integer
     field :total_price, :decimal
     field :product_id, :id
-
+    field :processed_at, :utc_datetime
     timestamps(type: :utc_datetime)
   end
 
