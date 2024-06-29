@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :clothing_company_dashboard, ClothingCompanyDashboard.Repo,
   username: "postgres",
-  password: "admin",
+  password: "postgres",
   hostname: "localhost",
   database: "clothing_company_dashboard_dev",
   stacktrace: true,
