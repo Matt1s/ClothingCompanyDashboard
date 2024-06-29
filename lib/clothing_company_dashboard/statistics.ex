@@ -30,9 +30,25 @@ defmodule ClothingCompanyDashboard.Statistics do
   def transactions_per_month do
     Repo.all(
       from t in Transaction,
-      group_by: [fragment("date_trunc('month', ?)", t.inserted_at)],
-      select: %{month: fragment("date_trunc('month', ?)", t.inserted_at), count: count(t.id)}
+      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at)],
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at), count: count(t.id)}
     )
+    |> Enum.map(fn %{month: month, count: count} ->
+      %{month: format_month(month), count: count}
+    end)
+  end
+
+  defp format_month(month) do
+    # Show only the month and year like "June 2024"
+    NaiveDateTime.to_date(month) # 2024-06-01
+    |> Date.to_string # "2024-06-01"
+    |> String.split("-") # ["2024", "06", "01"]
+    |> Enum.take(2) # ["2024", "06"]
+    |> Enum.join("-") # "2024-06"
+
+
+
+
   end
 
   def get_inventory do
