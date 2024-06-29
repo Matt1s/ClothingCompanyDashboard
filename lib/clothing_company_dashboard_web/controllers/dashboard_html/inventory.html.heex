@@ -14,15 +14,15 @@
         <tr>
           <td class="px-6 py-4 whitespace-nowrap"><%= product.title %></td>
           <td class="px-6 py-4 whitespace-nowrap"><%= product.stock %></td>
-          <td class="px-6 py-4 whitespace-nowrap"><%= product.price %>€</td>
-          <td class="px-6 py-4 whitespace-nowrap"><%= Decimal.mult(product.stock, product.price)%>€</td>
+          <td class="px-6 py-4 whitespace-nowrap"><%= Number.Currency.number_to_currency(product.price, unit: "€") %></td>
+          <td class="px-6 py-4 whitespace-nowrap"><%= Number.Currency.number_to_currency(Decimal.mult(product.price,product.stock), unit: "€") %></td>
         </tr>
       <% end %>
       <tr>
         <td class="px-6 py-4 whitespace-nowrap font-bold">Total</td>
         <td class="px-6 py-4 whitespace-nowrap font-bold"><%= Enum.reduce(@inventory, 0, fn product, acc -> acc + product.stock end) %></td>
         <td class="px-6 py-4 whitespace-nowrap"></td>
-        <td class="px-6 py-4 whitespace-nowrap font-bold"><%= Enum.reduce(@inventory, 0, fn product, acc -> Decimal.add(acc, Decimal.mult(product.stock, product.price)) end)%>€</td>
+        <td class="px-6 py-4 whitespace-nowrap font-bold"><%=  Number.Currency.number_to_currency(Enum.reduce(@inventory, 0, fn product, acc -> Decimal.add(acc, Decimal.mult(product.stock, product.price)) end), unit: "€")%></td>
       </tr>
     </tbody>
   </table>
