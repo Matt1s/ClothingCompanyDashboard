@@ -39,6 +39,18 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
     # Extract the photo from the parameters
     photo = product_params["photo"]
 
+    # If no photo is provided, create the product without a photo
+    if photo == nil do
+      case Inventory.create_product(product_params) do
+        {:ok, product} ->
+          conn
+          |> put_flash(:info, "Product created successfully.")
+          |> redirect(to: ~p"/products/#{product}")
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, :new, changeset: changeset)
+      end
+    end
     # Define the uploads path
     upload_path = Path.join(["priv", "static", "images", photo.filename])
 
@@ -90,8 +102,22 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
     # Extract the photo from the parameters
     photo = product_params["photo"]
 
+    # If no photo is provided, update the product without changing the photo
+    if photo == nil do
+      case Inventory.update_product(product, product_params) do
+        {:ok} ->
+          conn
+          |> put_flash(:info, "Product updated successfully.")
+          |> redirect(to: ~p"/products/")
+
+        {:error, %Ecto.Changeset{} = changeset} ->
+          render(conn, :edit, product: product, changeset: changeset)
+      end
+    end
+
     # Define the uploads path
     upload_path = Path.join(["priv", "static", "images", photo.filename])
+
 
     # Save the photo to the uploads directory
     case File.cp(photo.path, upload_path) do

@@ -17,6 +17,6 @@ defmodule ClothingCompanyDashboard.Inventory.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, [:photo, :title, :description, :category, :price, :stock])
-    |> validate_required([:photo, :title, :description, :category, :price, :stock])
+    |> validate_required([:title, :description, :category, :price, :stock])
   end
 end
