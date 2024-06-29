@@ -10,7 +10,7 @@
 </.header>
 
 <.list>
-  <:item title="Photo"><%= @product.photo %></:item>
+  <:item title="Photo"><img src={~s"#{@product.photo}"} alt="Product photo" class="h-10 w-10 object-cover rounded-md"/></:item>
   <:item title="Title"><%= @product.title %></:item>
   <:item title="Description"><%= @product.description %></:item>
   <:item title="Category"><%= @product.category %></:item>

@@ -102,13 +102,13 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
     # Extract the photo from the parameters
     photo = product_params["photo"]
 
-    # If no photo is provided, update the product without changing the photo
+    # If no photo is provided, update the product without a photo
     if photo == nil do
       case Inventory.update_product(product, product_params) do
-        {:ok} ->
+        {:ok, product} ->
           conn
           |> put_flash(:info, "Product updated successfully.")
-          |> redirect(to: ~p"/products/")
+          |> redirect(to: ~p"/products")
 
         {:error, %Ecto.Changeset{} = changeset} ->
           render(conn, :edit, product: product, changeset: changeset)
@@ -117,7 +117,6 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
 
     # Define the uploads path
     upload_path = Path.join(["priv", "static", "images", photo.filename])
-
 
     # Save the photo to the uploads directory
     case File.cp(photo.path, upload_path) do
@@ -129,7 +128,7 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
           {:ok, product} ->
             conn
             |> put_flash(:info, "Product updated successfully.")
-            |> redirect(to: ~p"/products/#{product}")
+            |> redirect(to: ~p"/products/#{product.id}")
 
           {:error, %Ecto.Changeset{} = changeset} ->
             render(conn, :edit, product: product, changeset: changeset)
@@ -141,6 +140,7 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
         |> render(:edit, product: product, changeset: Inventory.change_product(product))
     end
   end
+
 
   def delete(conn, %{"id" => id}) do
     product = Inventory.get_product!(id)
