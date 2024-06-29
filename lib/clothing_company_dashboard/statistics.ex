@@ -10,6 +10,7 @@ defmodule ClothingCompanyDashboard.Statistics do
       best_selling_product: best_selling_product(),
       transactions_per_month: transactions_per_month(),
       sales_per_month_last_year: sales_per_month_last_year(),
+      total_price_of_products_in_stock: total_price_of_products_in_stock()
     }
   end
 
@@ -17,14 +18,21 @@ defmodule ClothingCompanyDashboard.Statistics do
     Repo.aggregate(Product, :sum, :stock)
   end
 
+  def total_price_of_products_in_stock do
+    Repo.aggregate(Product, :sum, :price)
+  end
+
   def best_selling_product do
+    # Get the product with the highest total quantity sold during last 12 months
+
     Repo.one(
       from t in Transaction,
       join: p in Product, on: t.product_id == p.id,
+      where: t.processed_at > fragment("NOW() - INTERVAL '1 year'"),
       group_by: p.id,
       order_by: [desc: sum(t.quantity)],
       limit: 1,
-      select: p.title
+      select: [p.title, sum(t.quantity)]
     )
   end
 
@@ -32,7 +40,8 @@ defmodule ClothingCompanyDashboard.Statistics do
     Repo.all(
       from t in Transaction,
       group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)],
-      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id)}
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id)},
+      order_by: [asc: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)]
     )
     |> Enum.map(fn %{month: month, count: count} ->
       %{month: format_month(month), count: count}
@@ -52,10 +61,12 @@ defmodule ClothingCompanyDashboard.Statistics do
     Repo.all(
       from t in Transaction,
       group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)],
-      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id), total_price: sum(t.total_price)}
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at), count: count(t.id), total_price: sum(t.total_price)},
+      order_by: [asc: fragment("date_trunc('month', CAST(? AS timestamp))", t.processed_at)]
     )
     |> Enum.map(fn %{month: month, count: count, total_price: total_price} ->
       %{month: format_month(month), count: count, total_price: total_price}
+    # Sort by
     end)
   end
 

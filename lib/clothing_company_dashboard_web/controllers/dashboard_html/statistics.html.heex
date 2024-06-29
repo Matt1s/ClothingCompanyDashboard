@@ -1,32 +1,91 @@
+<!-- Chart JS to display the sales per month and transactions per month -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <div class="p-6 bg-white rounded-lg shadow-md">
   <h2 class="text-2xl font-bold mb-4">Dashboard Statistics</h2>
-  <div class="grid grid-cols-3 gap-4">
+  <div class="grid grid-cols-2 gap-4">
     <div class="p-4 bg-gray-100 rounded">
-      <h3 class="text-xl font-semibold">Total Products in Stock</h3>
-      <p class="text-2xl mt-2"> <%= @stats.total_products_in_stock %> </p>
+      <h4 class="text-md font-semibold">Total Products in Stock right now</h4>
+      <p class="text-2xl mt-2 font-bold"> <%= @stats.total_products_in_stock %> pieces</p>
+      <h3 class="text-md mt-4 font-semibold">with total value</h3>
+      <p class="text-2xl mt-2 font-bold"> <%= @stats.total_price_of_products_in_stock %>€</p>
     </div>
     <div class="p-4 bg-gray-100 rounded">
-      <h3 class="text-xl font-semibold">Best Selling Product</h3>
-      <p class="text-2xl mt-2"><%= @stats.best_selling_product %></p>
+      <h3 class="text-md font-semibold">Best Selling Product last 12 months</h3>
+      <p class="text-2xl mt-2 font-bold"><%= Enum.at(@stats.best_selling_product, 0) %></p>
+      <h3 class="text-md mt-4 font-semibold">with total times sold</h3>
+      <p class="text-2xl mt-2 font-bold"><%= Enum.at(@stats.best_selling_product, 1) %> times</p>
+    </div>
+  </div>
+  <div class="grid grid-cols-1 gap-4 mt-4">
+    <div class="p-4 bg-gray-100 rounded">
+      <h3 class="text-xl font-semibold">Sales during last 12 months</h3>
+        <canvas id="salesLastYear"></canvas>
     </div>
     <div class="p-4 bg-gray-100 rounded">
       <h3 class="text-xl font-semibold">Transactions per Month</h3>
-      <ul>
-        <%= for transaction <- @stats.transactions_per_month do %>
-          <li class="mt-2"><%= transaction.month %> - <%= transaction.count %> transactions</li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <h2 class="text-2xl font-bold my-4">Sales during last 12 months</h2>
-  <div class="grid grid-cols-3 gap-4">
-    <div class="p-4 bg-gray-100 rounded">
-      <h3 class="text-xl font-semibold">Sales per Month</h3>
-      <ul>
-        <%= for sale <- @stats.sales_per_month_last_year do %>
-          <li class="mt-2"><%= sale.month %> - <%= sale.total_price %> sales</li>
-        <% end %>
-      </ul>
+      <canvas id="transactionsLastYear"></canvas>
     </div>
   </div>
 </div>
+
+<script>
+
+
+  const ctx = document.getElementById('salesLastYear');
+  const ctxTransactions = document.getElementById('transactionsLastYear');
+
+  labelsMonths = []
+  // loop through the @stats.sales_per_month_last_year
+  // and add the month to the labelsMonths array
+  last12MonthsLabels = []
+  for (let i = 0; i < 12; i++) {
+    last12MonthsLabels.push(new Date(new Date().setMonth(new Date().getMonth() - i)).toLocaleString('default', { month: 'long', year: 'numeric'}))
+  }
+  last12MonthsLabels.reverse()
+
+
+
+  const salesLastYear = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: last12MonthsLabels,
+      datasets: [{
+        cubicInterpolationMode: 'monotone',
+        label: 'Sales per Month (€)',
+        data: [<%= Enum.map(@stats.sales_per_month_last_year, fn sale -> "#{sale.total_price}" end) |> Enum.join(", ") %>],
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  const transactionsLastYear = new Chart(ctxTransactions, {
+    type: 'bar',
+    data: {
+      labels: last12MonthsLabels,
+      datasets: [{
+        label: 'Transactions per Month',
+        data: [<%= Enum.map(@stats.transactions_per_month, fn transaction -> "#{transaction.count}" end) |> Enum.join(", ") %>],
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
