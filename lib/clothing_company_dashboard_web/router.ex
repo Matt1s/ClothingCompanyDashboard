@@ -70,6 +70,7 @@ defmodule ClothingCompanyDashboardWeb.Router do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       resources "/products", ProductController
+      get "/transactions", DashboardController, :transactions
     end
   end
 
