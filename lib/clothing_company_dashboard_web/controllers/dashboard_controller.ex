@@ -6,6 +6,15 @@ defmodule ClothingCompanyDashboardWeb.DashboardController do
     statistics = Statistics.get_statistics()
     render(conn, "index.html", statistics: statistics)
   end
+  def transactions(conn, %{"month" => ""}) do
+    transactions = Statistics.get_transactions()
+    render(conn, "transactions.html", transactions: transactions)
+  end
+
+  def transactions(conn, %{"month" => month}) do
+    transactions = Statistics.get_transactions(month)
+    render(conn, "transactions.html", transactions: transactions)
+  end
 
   def transactions(conn, _params) do
     transactions = Statistics.get_transactions()

@@ -1,5 +1,6 @@
 defmodule ClothingCompanyDashboard.Statistics do
   import Ecto.Query
+  require Logger
   alias ClothingCompanyDashboard.Repo
   alias ClothingCompanyDashboard.Inventory.Product
   alias ClothingCompanyDashboard.Sales.Transaction
@@ -81,6 +82,7 @@ defmodule ClothingCompanyDashboard.Statistics do
   end
 
   def get_transactions do
+    Logger.info("Getting all transactions")
     query =
       from t in Transaction,
         join: p in Product, on: t.product_id == p.id,
@@ -88,4 +90,31 @@ defmodule ClothingCompanyDashboard.Statistics do
 
     Repo.all(query)
   end
+
+  def get_transactions(month) do
+    case parse_month(month) do
+      {:ok, month_date} ->
+        Repo.all(
+          from t in Transaction,
+            join: p in Product, on: t.product_id == p.id,
+            where: fragment("date_trunc('month', ?)", t.processed_at) == ^month_date,
+            select: %{product_title: p.title, quantity: t.quantity, date: t.processed_at}
+        )
+
+      _ ->
+        []  # Return an empty list or handle the error as needed
+    end
+  end
+
+  defp parse_month(month) do
+    year = month |> String.split("-") |> Enum.at(0) |> String.to_integer()
+    month = month |> String.split("-") |> Enum.at(1) |> String.to_integer()
+
+    case NaiveDateTime.new(year, month, 1, 0, 0, 0) do
+      {:ok, naive_date_time} -> {:ok, naive_date_time}
+      error -> error
+    end
+  end
+
+
 end
