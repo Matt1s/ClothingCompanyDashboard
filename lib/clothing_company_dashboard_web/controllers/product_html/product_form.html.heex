@@ -5,7 +5,11 @@
   <.input field={f[:photo]} type="file" label="Photo" />
   <.input field={f[:title]} type="text" label="Title" />
   <.input field={f[:description]} type="text" label="Description" />
-  <.input field={f[:category]} type="text" label="Category" />
+  <.input field={f[:category]} 
+  type="select" 
+  label="Category" 
+  options={["", "Tops", "Bottoms", "Outerwear", "Footwear", "Accessories", "Dresses"]} 
+  />
   <.input field={f[:price]} type="number" label="Price" step="any" />
   <.input field={f[:stock]} type="number" label="Stock" />
   <:actions>

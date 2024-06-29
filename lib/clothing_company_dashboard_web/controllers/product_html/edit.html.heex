@@ -6,7 +6,7 @@
 <div class="p-5 bg-white rounded-md pt-5 h-fit">
 <p>Photo preview:</p>
 <img class="rounded-md" src={@product.photo} alt={@product.title}/>
-<.product_form changeset={@changeset} action={~p"/products/#{@product}"} multipart/>
+<.product_form changeset={@changeset} action={~p"/products/#{@product}"} />
 </div>
 
 <.back navigate={~p"/products"}>Back to products</.back>

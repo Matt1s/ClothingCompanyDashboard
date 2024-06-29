@@ -7,6 +7,9 @@ defmodule ClothingCompanyDashboardWeb.ProductHTML do
   """
   attr :changeset, Ecto.Changeset, required: true
   attr :action, :string, required: true
+  attr :categories, :list, required: true
+
+  categories = ["Tops", "Bottoms", "Outerwear", "Footwear", "Accessories", "Dresses"]
 
   def product_form(assigns)
 end
