@@ -4,7 +4,6 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
   alias ClothingCompanyDashboard.Inventory
   alias ClothingCompanyDashboard.Inventory.Product
 
-
   def index(conn, params) do
     changeset = Inventory.change_product(%Product{})
 
@@ -35,14 +34,41 @@ defmodule ClothingCompanyDashboardWeb.ProductController do
   end
 
   def create(conn, %{"product" => product_params}) do
-    case Inventory.create_product(product_params) do
-      {:ok, product} ->
-        conn
-        |> put_flash(:info, "Product created successfully.")
-        |> redirect(to: ~p"/products/#{product}")
+    ensure_uploads_directory_exists()
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, :new, changeset: changeset)
+    # Extract the photo from the parameters
+    photo = product_params["photo"]
+
+    # Define the uploads path
+    upload_path = Path.join(["priv", "static", "images", photo.filename])
+
+    # Save the photo to the uploads directory
+    case File.cp(photo.path, upload_path) do
+      :ok ->
+        # Update product_params to include the photo path
+        updated_product_params = Map.put(product_params, "photo", "/images/" <> photo.filename)
+
+        case Inventory.create_product(updated_product_params) do
+          {:ok, product} ->
+            conn
+            |> put_flash(:info, "Product created successfully.")
+            |> redirect(to: ~p"/products/#{product}")
+
+          {:error, %Ecto.Changeset{} = changeset} ->
+            render(conn, :new, changeset: changeset)
+        end
+
+      {:error, reason} ->
+        conn
+        |> put_flash(:error, "Failed to upload photo: #{reason}")
+        |> render(:new, changeset: Inventory.change_product(%Product{}))
+    end
+  end
+
+  defp ensure_uploads_directory_exists do
+    uploads_path = Path.join(["priv", "static", "uploads"])
+    unless File.dir?(uploads_path) do
+      File.mkdir_p!(uploads_path)
     end
   end
 

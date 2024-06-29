@@ -60,7 +60,9 @@ defmodule ClothingCompanyDashboard.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-      {:number, "~> 1.0"}
+      {:number, "~> 1.0"},
+      {:waffle, "~> 1.1"},
+      {:waffle_ecto, "~> 0.0.10"}
     ]
   end
 

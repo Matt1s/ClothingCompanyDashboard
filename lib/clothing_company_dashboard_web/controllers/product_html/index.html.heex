@@ -42,7 +42,7 @@
 		<!-- Display the products in a table if there are any, otherwise show a message -->
 		<%= if @products != [] do %>
 		<.table id="products" rows={@products} row_click={&JS.navigate(~p"/products/#{&1}")}>
-		<:col :let={product} label="Photo"><img src={product.photo} alt={product.title} class="w-5 h-5 object-cover"></:col>
+		<:col :let={product} label="Photo"><img src={~s"#{product.photo}"} alt={product.title} class="h-10 w-10 object-cover rounded-md"/></:col>
 		<:col :let={product} label="Title"><%= product.title %></:col>
 		<:col :let={product} label="Description"><%= product.description %></:col>
 		<:col :let={product} label="Category"><%= product.category %></:col>
