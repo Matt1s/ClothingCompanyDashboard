@@ -30,8 +30,8 @@ defmodule ClothingCompanyDashboard.Statistics do
   def transactions_per_month do
     Repo.all(
       from t in Transaction,
-      group_by: [fragment("date_trunc('month', ?)", t.date)],
-      select: %{month: fragment("date_trunc('month', ?)", t.date), count: count(t.id)}
+      group_by: [fragment("date_trunc('month', ?)", t.inserted_at)],
+      select: %{month: fragment("date_trunc('month', ?)", t.inserted_at), count: count(t.id)}
     )
   end
 

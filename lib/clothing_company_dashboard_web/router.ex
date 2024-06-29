@@ -72,6 +72,7 @@ defmodule ClothingCompanyDashboardWeb.Router do
       resources "/products", ProductController
       get "/transactions", DashboardController, :transactions
       get "/inventory", DashboardController, :inventory
+      get "/statistics", DashboardController, :statistics
     end
   end
 
