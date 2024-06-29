@@ -8,7 +8,8 @@ defmodule ClothingCompanyDashboard.Statistics do
     %{
       total_products_in_stock: total_products_in_stock(),
       best_selling_product: best_selling_product(),
-      transactions_per_month: transactions_per_month()
+      transactions_per_month: transactions_per_month(),
+      sales_per_month_last_year: sales_per_month_last_year(),
     }
   end
 
@@ -45,10 +46,18 @@ defmodule ClothingCompanyDashboard.Statistics do
     |> String.split("-") # ["2024", "06", "01"]
     |> Enum.take(2) # ["2024", "06"]
     |> Enum.join("-") # "2024-06"
+  end
 
-
-
-
+  def sales_per_month_last_year do
+    Repo.all(
+      from t in Transaction,
+      where: t.inserted_at >= ^DateTime.utc_now(),
+      group_by: [fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at)],
+      select: %{month: fragment("date_trunc('month', CAST(? AS timestamp))", t.inserted_at), count: count(t.id)}
+    )
+    |> Enum.map(fn %{month: month, count: count} ->
+      %{month: format_month(month), count: count}
+    end)
   end
 
   def get_inventory do
