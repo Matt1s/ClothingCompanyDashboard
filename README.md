@@ -3,7 +3,7 @@
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
-  * Assuming you got PostgreSQL installed, with config username: "postgres" and password: "postgres", all should be setup, otherwise, change /config/dev.exs file match your credentials and run <code>mix ecto.migrate</code>
+  * Assuming you got PostgreSQL installed, with config username: "postgres" and password: "postgres", all should be setup, otherwise, change /config/dev.exs file match your credentials and run again <code>mix setup</code>
   * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
