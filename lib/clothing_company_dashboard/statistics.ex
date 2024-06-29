@@ -15,12 +15,18 @@ defmodule ClothingCompanyDashboard.Statistics do
   end
 
   def total_products_in_stock do
-    Repo.aggregate(Product, :sum, :stock)
+    Repo.aggregate(Product, :sum, :stock, [])
   end
 
   def total_price_of_products_in_stock do
-    Repo.aggregate(Product, :sum, :price)
+    query =
+      from p in Product,
+      select: %{total_price: sum(p.price * p.stock)}
+
+    Repo.one(query)
+    |> Map.get(:total_price, Decimal.new("0.0"))  # Default to 0.0 if no products are found
   end
+
 
   def best_selling_product do
     # Get the product with the highest total quantity sold during last 12 months
