@@ -29,7 +29,7 @@ defmodule ClothingCompanyDashboard.Inventory do
     price_min = if price_min == "" do nil else price_min end
     price_max = if price_max == "" do nil else price_max end
     name = if name == "" do nil else name end
-    in_stock = if in_stock == "" do nil else in_stock end
+    in_stock = if in_stock == "" do true else in_stock end
 
     Product
     |> maybe_filter_by_category(category)
@@ -50,7 +50,7 @@ defmodule ClothingCompanyDashboard.Inventory do
   defp maybe_filter_by_price_max(query, price_max), do: (from p in query, where: p.price <= ^Decimal.new(price_max))
 
   defp maybe_filter_by_name(query, nil), do: query
-  defp maybe_filter_by_name(query, name), do: (from p in query, where: p.title == ^name)
+  defp maybe_filter_by_name(query, name), do: (from p in query, where: fragment("LOWER(?) LIKE LOWER(?)", p.title, ^"%#{name}%"))
 
   defp maybe_filter_by_in_stock(query, nil), do: query
   defp maybe_filter_by_in_stock(query, in_stock), do: (from p in query, where: p.stock > 0)
